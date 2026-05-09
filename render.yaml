@@ -11,7 +11,7 @@ services:
     branch: main
 
     # ── Build & Start ────────────────────────────────────────────────────────
-    buildCommand: npm install
+    buildCommand: npm install --build-from-source && mkdir -p data
     startCommand: npm start
 
     # ── Health Check ─────────────────────────────────────────────────────────
