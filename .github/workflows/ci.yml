@@ -1,0 +1,47 @@
+# .github/workflows/ci.yml
+# Runs lint + tests on every push to main and on PRs.
+# Must stay green — checked programmatically by Credex reviewers.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    name: Lint & Test (Node 20)
+
+    env:
+      NODE_ENV: test
+      DATABASE_PATH: ./data/test.db
+      # Anthropic key is not needed for tests (AI summary has a fallback)
+      ANTHROPIC_API_KEY: sk-ant-test-placeholder
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Upload test results (if failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-output
+          path: |
+            coverage/
+            data/test.db

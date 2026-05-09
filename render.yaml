@@ -1,0 +1,60 @@
+# render.yaml — SpendScout Blueprint
+# Place this file at the ROOT of your GitHub repo (vijayleo20010509-pk/aispend)
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: spendscout-backend
+    runtime: node
+    region: singapore          # Closest region to India
+    plan: free                 # Change to "starter" for production
+    branch: main
+
+    # ── Build & Start ────────────────────────────────────────────────────────
+    buildCommand: npm install
+    startCommand: npm start
+
+    # ── Health Check ─────────────────────────────────────────────────────────
+    healthCheckPath: /health
+
+    # ── Auto-Deploy ──────────────────────────────────────────────────────────
+    autoDeploy: true
+
+    # ── Environment Variables ─────────────────────────────────────────────────
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      - key: PORT
+        value: 3001
+
+      - key: BASE_URL
+        value: https://spendscout-backend.onrender.com   # Update after first deploy
+
+      - key: FRONTEND_URL
+        value: https://spendscout.credex.rocks           # Your frontend domain
+
+      - key: DATABASE_PATH
+        value: ./data/spendscout.db
+
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+
+      - key: RATE_LIMIT_MAX
+        value: 50
+
+      # ── Secret keys — Enter manually in Render Dashboard after deploy ──────
+      - key: ANTHROPIC_API_KEY
+        sync: false            # You will set this in Render → Environment tab
+
+      - key: RESEND_API_KEY
+        sync: false            # You will set this in Render → Environment tab
+
+      - key: EMAIL_FROM
+        sync: false            # e.g. audit@spendscout.credex.rocks
+
+      - key: EMAIL_FROM_NAME
+        value: SpendScout by Credex
+
+      - key: SHARE_TOKEN_SECRET
+        generateValue: true    # Render auto-generates a secure random value
